@@ -1,3 +1,4 @@
+
 package ml
 
 import org.scalatest._
@@ -14,8 +15,8 @@ class LinearRegressionSpec extends FlatSpec with MustMatchers {
   }
 
   it should "calculate the cost function" in {
-    val x = data.map(row => row(0))
-    val y = data.map(row => row(1))
+    val x = M(data.col(0))
+    val y = data.col(1)
     val theta = V(0.0, 0.0)
     cost(x, y, theta) === (32.07 +- 0.01)
   }
