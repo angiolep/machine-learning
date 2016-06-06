@@ -14,8 +14,8 @@ package object ml {
 
     def +(v2: V): V = zip(v1, v2, _ + _ )
     def -(v2: V): V = zip(v1, v2, _ - _ )
-    // TODO def *(s: Double): V = v1.map(_ * s)
-    def *(v2: V): Double = (0.0 /: zip(v1, v2, _ * _ ))(_ + _)
+    def *(v2: V): V = zip(v1, v2, _ * _ )
+    def dotProd(v2: V): Double = (v1 * v2).sum
     def ^(e: Double): V = v1.map(_ ^ e)
   }
 
@@ -45,7 +45,7 @@ package object ml {
       * @param v is the column vector
       * @return a column vector
       */
-    def **(v: V): V = m1.map(row => row * v)
+    def **(v: V): V = m1.map(row => row dotProd v)
 
     /**
       * Multiply this matrix by the supplied matrix
@@ -56,7 +56,7 @@ package object ml {
     def ***(m2: M): M = {
       for (m1row <- m1) yield {
         for (m2col <- m2.tr) yield {
-          m1row * m2col
+          m1row dotProd m2col
         }
       }
     }

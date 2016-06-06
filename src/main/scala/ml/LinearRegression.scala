@@ -12,8 +12,7 @@ object LinearRegression {
     * @param theta is the vector of linear prediction parameters
     * @return the prediction vector
     */
-  def h(x: M, theta: V): V = x ** theta
-
+  def h(x: M, theta: V) = (1.0 |: x) ** theta
 
   /**
     * Calculate the cost of prediction as half mean of squared errors for
@@ -26,26 +25,30 @@ object LinearRegression {
     * @param x is the matrix of input training features
     * @param y is the vector of output training results
     * @param theta is the vector of linear prediction parameters
-    *
     * @return the cost of prediction for the given training examples and linear prediction parameters
     */
   def cost(x: M, y: V, theta: V): Double = {
-
-    // complete the data matrix prepending a column vector made of ones
-    val xx: M = 1.0 |: x
-
-    // calculate the predictions vector
-    val ps: V = h(xx, theta)
-
-    // calculate the sum of squared errors of that prediction
-    val sse: Double = ((ps - y) ^ 2).sum
+    
+    // calculate the sum of squared errors of predictions
+    val sse: Double = ((h(x, theta) - y) ^ 2).sum
 
     // and finally their mean
     sse / (2 * (x.size min y.size))
   }
 
 
-  
+  def gradientDescent(x: M, y: V, alpha: Double, iterations: Int): V = {
+    val m = x.size min y.size
+    def slope(theta: V, j: Int) : Double = ((h(x, theta) - y) * x.col(j)).sum / m
+    var theta = V(0.0, 0.0)
+    for (k <- 1 to iterations) {
+      println(cost(x, y, theta))
+      theta = for((t,j) <- theta.zipWithIndex) yield {
+        t - alpha * slope(theta, j)
+      }
+    }
+    theta
+  }
 
 
   def load(file: String): M = {
